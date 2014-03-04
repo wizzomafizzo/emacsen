@@ -104,6 +104,7 @@
 (winner-mode 1)
 (popwin-mode 1)
 (window-numbering-mode 1)
+(which-function-mode 1)
 
 (push '("\\.ps1$" . powershell-mode) auto-mode-alist)
 (push '("\\.asp$" . asp-mode) auto-mode-alist)
@@ -112,7 +113,9 @@
 (global-set-key (kbd "C-c g") 'org-iswitchb)
 (global-set-key (kbd "C-c f") 'projectile-find-file)
 (global-set-key (kbd "C-c r") 'rotate-windows)
-(global-set-key (kbd "C-x b") 'helm-mini)
+(global-set-key (kbd "C-x b") 'helm-buffers-list)
+(global-set-key (kbd "C-x C-b") 'helm-buffers-list)
+(global-set-key (kbd "C-c h") 'helm-projectile)
 (global-set-key (kbd "C-c m") 'magit-status)
 (global-set-key (kbd "C-c n") 'minimap-create)
 (global-set-key (kbd "C-c N") 'minimap-kill)
