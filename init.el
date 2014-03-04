@@ -25,12 +25,16 @@
 (setq ido-enable-flex-matching t)
 (setq ido-everywhere t)
 
+(setq explicit-shell-file-name "/bin/bash")
+(setq comint-scroll-to-bottom-on-input 1)
+(setq comint-scroll-show-maximum-output 1)
+
 (setq backup-directory-alist
       `((".*" . ,temporary-file-directory)))
 (setq auto-save-file-name-transforms
       `((".*" ,temporary-file-directory t)))
 
-(setq python-shell-interpreter "/usr/bin/ipython")
+(setq python-shell-interpreter "/usr/bin/ipython3")
 (setq python-shell-interpreter-args "")
 
 (add-hook 'python-mode-hook 'jedi:setup)
@@ -44,7 +48,7 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(column-number-mode t)
- '(custom-safe-themes (quote ("f3ceb7a30f6501c1093bc8ffdf755fe5ddff3a85437deebf3ee8d7bed8991711" "70cf411fbf9512a4da81aa1e87b064d3a3f0a47b19d7a4850578c8d64cac2353" "8aebf25556399b58091e533e455dd50a6a9cba958cc4ebb0aab175863c25b9a4" "4cb3034cbb7fd36bf0989fad19cac0beb818472854a7cbc8d2a597538b1f2cf0" "9cc993013dc78c24f44ea4a34e5f868f8674bbfe1501f12e233c5cb14cdd38df" default)))
+ '(custom-safe-themes (quote ("73fe242ddbaf2b985689e6ec12e29fab2ecd59f765453ad0e93bc502e6e478d6" "97a2b10275e3e5c67f46ddaac0ec7969aeb35068c03ec4157cf4887c401e74b1" "f3ceb7a30f6501c1093bc8ffdf755fe5ddff3a85437deebf3ee8d7bed8991711" "70cf411fbf9512a4da81aa1e87b064d3a3f0a47b19d7a4850578c8d64cac2353" "8aebf25556399b58091e533e455dd50a6a9cba958cc4ebb0aab175863c25b9a4" "4cb3034cbb7fd36bf0989fad19cac0beb818472854a7cbc8d2a597538b1f2cf0" "9cc993013dc78c24f44ea4a34e5f868f8674bbfe1501f12e233c5cb14cdd38df" default)))
  '(helm-mode nil)
  '(show-paren-mode t)
  '(tool-bar-mode nil))
@@ -74,10 +78,12 @@
 (require 'auto-complete)
 (require 'pretty-mode)
 (require 'popwin)
+(require 'projectile)
+(require 'minimap)
 
 (require 'my-functions)
 
-(load-theme 'monokai)
+(load-theme 'inkpot)
 
 ;(autopair-global-mode 0)
 (recentf-mode 1)
@@ -97,6 +103,7 @@
 (delete-selection-mode t)
 (winner-mode 1)
 (popwin-mode 1)
+(window-numbering-mode 1)
 
 (push '("\\.ps1$" . powershell-mode) auto-mode-alist)
 (push '("\\.asp$" . asp-mode) auto-mode-alist)
@@ -107,6 +114,8 @@
 (global-set-key (kbd "C-c r") 'rotate-windows)
 (global-set-key (kbd "C-x b") 'helm-mini)
 (global-set-key (kbd "C-c m") 'magit-status)
+(global-set-key (kbd "C-c n") 'minimap-create)
+(global-set-key (kbd "C-c N") 'minimap-kill)
 (global-set-key "\C-ca" 'org-agenda)
 (global-set-key [(control z)] 'create-shell)
 (global-set-key [M-left] 'windmove-left)
@@ -118,6 +127,13 @@
 (global-set-key (kbd "<C-S-left>")   'buf-move-left)
 (global-set-key (kbd "<C-S-right>")  'buf-move-right)
 (global-set-key (kbd "C-c SPC") 'ace-jump-mode)
+(global-set-key (kbd "C-S-c C-S-c") 'mc/edit-lines)
+(global-set-key (kbd "C-c i") 'imenu)
+(global-set-key "\C-l" 'whack-whitespace)
+(global-set-key (kbd "M-x") 'smex)
+(global-set-key (kbd "M-X") 'smex-major-mode-commands)
+;; This is your old M-x.
+(global-set-key (kbd "C-c C-c M-x") 'execute-extended-command)
 
 (add-hook 'python-mode-hook
           (lambda () (define-key python-mode-map (kbd "C-c c") (lambda ()
@@ -130,7 +146,6 @@
   (interactive nil)
   (when (re-search-forward "[ \t\n]+" nil t)
     (replace-match "" nil nil)))
-(global-set-key "\C-l" 'whack-whitespace)
 
 (defun create-shell ()
     "creates a shell with a given name"
@@ -140,14 +155,7 @@
 
 (defun ipython ()
   (interactive)
-  (term "/usr/bin/ipython"))
-
-(custom-set-faces
- ;; custom-set-faces was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(default ((((class color) (min-colors 89)) (:foreground "#657b83" :background "#fdf6e3")))))
+  (term "/usr/bin/ipython3"))
 
 ;; thx chee. idk what half this shit does
 (setq mouse-wheel-scroll-amount '(4 ((shift) . t)))
@@ -160,3 +168,10 @@
   (global-set-key [double-wheel-up] (lambda () (interactive) (scroll-down-command 2)))
   (global-set-key [triple-wheel-down] (lambda () (interactive) (scroll-up-command 3)))
   (global-set-key [triple-wheel-up] (lambda () (interactive) (scroll-down-command 3))))
+
+(custom-set-faces
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(default ((t (:family "Terminus" :foundry "xos4" :slant normal :weight normal :height 90 :width normal)))))
