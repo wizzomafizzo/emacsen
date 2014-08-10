@@ -1,4 +1,15 @@
-;; Callan - custom functions
+;;;; wizzomafizzo: custom functions
+
+;;; try disable modal dialogs everywhere
+;;; to workaround crashing on mac
+(defadvice yes-or-no-p (around prevent-dialog activate)
+  "Prevent yes-or-no-p from activating a dialog"
+  (let ((use-dialog-box nil))
+    ad-do-it))
+(defadvice y-or-n-p (around prevent-dialog-yorn activate)
+  "Prevent y-or-n-p from activating a dialog"
+  (let ((use-dialog-box nil))
+    ad-do-it))
 
 (defun rotate-windows ()
   "Rotate your windows"
@@ -25,6 +36,12 @@
              (set-window-start w2 s1)
              (setq i (1+ i)))))))
 
+(defun handle-fish-path ()
+  (when (file-name-nondirectory (getenv "SHELL")) "fish"
+		(setq path-separator " ")
+		(exec-path-from-shell-initialize)
+		(setq path-separator ":")))
+
 (defun backup-config ()
   "Backup emacs configuration to home drive"
   (interactive)
@@ -49,5 +66,33 @@
       (forward-line)
       (transpose-lines -1))
     (move-to-column col)))
+
+(defun whack-whitespace ()
+  "Delete all white space from point to the next word."
+  (interactive nil)
+  (when (re-search-forward "[ \t\n]+" nil t)
+    (replace-match "" nil nil)))
+
+(defun create-shell ()
+    "creates a shell with a given name"
+    (interactive);; "Prompt\n shell name:")
+    (let ((shell-name (read-string "shell name: " nil)))
+    (shell (concat "*" shell-name "*"))))
+
+(defun ipython ()
+  (interactive)
+  (term "/usr/bin/ipython3"))
+
+(defun unpop-to-mark-command ()
+  "Unpop off mark ring. Does nothing if mark ring is empty."
+  (interactive)
+  (when mark-ring
+	(let ((pos (marker-position (car (last mark-ring)))))
+	  (if (not (= (point) pos))
+		  (goto-char pos)
+		(setq mark-ring (cons (copy-marker (mark-marker)) mark-ring))
+		(set-marker (mark-marker) pos)
+		(setq mark-ring (nbutlast mark-ring))
+		(goto-char (marker-position (car (last mark-ring))))))))
 
 (provide 'my-functions)
