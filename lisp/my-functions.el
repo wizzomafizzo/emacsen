@@ -1,5 +1,16 @@
 ;;;; wizzomafizzo: custom functions
 
+(defun scratch-lisp-file ()
+  "Insert a template (with DEFPACKAGE and IN-PACKAGE forms) into
+  the current buffer."
+  (interactive)
+  (goto-char 0)
+  (let* ((file (file-name-nondirectory (buffer-file-name)))
+         (package (file-name-sans-extension file)))
+    (insert ";;;; " file "\n")
+    (insert "\n(defpackage #:" package "\n  (:use #:cl))\n\n")
+    (insert "(in-package #:" package ")\n\n")))
+
 ;;; try disable modal dialogs everywhere
 ;;; to workaround crashing on mac
 (defadvice yes-or-no-p (around prevent-dialog activate)
