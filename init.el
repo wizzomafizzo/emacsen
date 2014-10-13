@@ -4,7 +4,7 @@
 (setq inhibit-startup-message t)
 (tool-bar-mode -1)
 (scroll-bar-mode -1)
-(menu-bar-mode 1)
+(menu-bar-mode -1)
 
 (add-to-list 'load-path "~/.emacs.d/lisp")
 (add-to-list 'load-path "~/.emacs.d/slime")
@@ -25,15 +25,18 @@
 (require 'auto-complete)
 (require 'popwin)
 (require 'slime-autoloads)
+(require 'smart-tab)
 
 (load-theme 'monokai t)
-(custom-set-faces '(default ((t (:height 100 :family "Droid Sans Mono")))))
+(custom-set-faces '(default ((t (:height 120 :family "Monaco")))))
 
 ;; mac stuff
 (when (eq system-type 'darwin)
   (exec-path-from-shell-initialize)
   (setq ns-command-modifier 'meta)
-  (setq flymake-gui-warnings-enabled nil))
+  (setq flymake-gui-warnings-enabled nil)
+  (setq use-dialog-box nil)
+  (menu-bar-mode 1))
 
 ;; core emacs settings
 (add-hook 'before-save-hook (lambda () (delete-trailing-whitespace)))
@@ -48,7 +51,6 @@
 (setq auto-save-file-name-transforms `((".*" ,temporary-file-directory t)))
 ;(setq jit-lock-defer-time 0.02)
 (setq redisplay-dont-pause t)
-
 ;;; custom keybindings
 (global-set-key (kbd "C-c f") 'projectile-find-file)
 (global-set-key (kbd "C-c p") 'projectile-switch-project)
@@ -96,13 +98,14 @@
 (setq ido-everywhere t)
 ;; common lisp
 (setq inferior-lisp-program "sbcl")
-(setq slime-contribs '(slime-fancy slime-autodoc))
+(setq slime-contribs '(slime-fancy))
 ;; clojure
 (setq nrepl-hide-special-buffers t)
 ;; js
 (setq js2-highlight-level 3)
 ;; whitespace
-(setq whitespace-style '(face empty tabs lines-tail trailing))
+(setq whitespace-line-column 80)
+(setq whitespace-style '(face lines-tail))
 
 ;;; enable global modes
 (show-paren-mode 1)
@@ -117,27 +120,20 @@
 (winner-mode 1)
 (popwin-mode 1)
 (window-numbering-mode 1)
-(which-function-mode 1)
-(helm-mode 1)
+;(which-function-mode 1)
 (global-whitespace-mode 1)
+(global-smart-tab-mode 1)
 
 ;;; mode hooks
 (add-hook 'emacs-lisp-mode-hook #'enable-paredit-mode)
 (add-hook 'emacs-lisp-mode-hook #'rainbow-delimiters-mode)
 (add-hook 'emacs-lisp-mode-hook #'eldoc-mode)
 
-(add-hook 'eval-expression-minibuffer-setup-hook #'enable-paredit-mode)
-
-(add-hook 'lisp-mode-hook #'disable-eldoc-mode)
-(add-hook 'lisp-mode-hook #'slime-autodoc-mode)
 (add-hook 'lisp-mode-hook #'rainbow-delimiters-mode)
 (add-hook 'lisp-mode-hook #'enable-paredit-mode)
 
 (add-hook 'lisp-interaction-mode-hook #'enable-paredit-mode)
 (add-hook 'lisp-interaction-mode-hook #'rainbow-delimiters-mode)
-
-(add-hook 'scheme-mode-hook #'enable-paredit-mode)
-(add-hook 'scheme-mode-hook #'rainbow-delimiters-mode)
 
 (add-hook 'cider-mode-hook #'cider-turn-on-eldoc-mode)
 (add-hook 'cider-mode-hook #'enable-paredit-mode)
@@ -156,6 +152,7 @@
 (add-to-list 'auto-mode-alist '("\\.ps1$" . powershell-mode))
 (add-to-list 'auto-mode-alist '("\\.asp$" . asp-mode))
 (add-to-list 'auto-mode-alist '("\\.js$" . js2-mode))
+(add-to-list 'auto-mode-alist '("\\.html$" . web-mode))
 
 ;;; natural scrolling
 (setq mouse-wheel-scroll-amount '(4 ((shift) . t)))
