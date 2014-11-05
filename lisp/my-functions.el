@@ -8,8 +8,8 @@
   (let* ((file (file-name-nondirectory (buffer-file-name)))
          (package (file-name-sans-extension file)))
     (insert ";;;; " file "\n")
-    (insert "\n(defpackage #:" package "\n  (:use #:cl))\n\n")
-    (insert "(in-package #:" package ")\n\n")))
+    (insert "\n(defpackage :" package "\n  (:use :cl))\n\n")
+    (insert "(in-package :" package ")\n\n")))
 
 ;;; try disable modal dialogs everywhere
 ;;; to workaround crashing on mac
