@@ -1,60 +1,53 @@
 emacsen
 =======
 
-EMACS EMACS #VERYBASED
+EMACS EMACS #DOOT
 
 ## Packages ##
 
 USE THESE FOR A FUNDERFUL EXPERIENCE
 
-### Manual ###
-
 - slime
-- helm
-
-### Packages ###
-
-- ace-jump-mode
-- bash-completion
+- 2048-game
+- anaconda-mode
+- browse-kill-ring
 - buffer-move
 - cider
 - clojure-mode
 - company
-- company-c-headers
-- dsvn
+- company-anaconda
+- csv-mode
+- diminish
 - elfeed
-- elpy
+- erc-hl-nicks
 - exec-path-from-shell
+- find-file-in-project
 - flycheck
 - geiser
 - git-commit-mode
 - git-gutter
-- git-rebase-mode
 - hackernews
+- helm
+- helm-projectile
 - htmlize
-- ipython
 - jedi
 - js2-mode
 - json-mode
 - lua-mode
 - magit
-- magit-svn
 - markdown-mode
 - moe-theme
 - multiple-cursors
 - paredit
 - pkgbuild-mode
 - popwin
-- powerline
+- powershell
+- powershell-mode
 - projectile
-- pyflakes
-- python-mode
 - rainbow-delimiters
 - rainbow-mode
 - rust-mode
-- smartparens
 - smex
-- undo-tree
 - vlf
 - web-mode
 - window-numbering
