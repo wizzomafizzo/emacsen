@@ -9,9 +9,9 @@
 (add-to-list 'load-path "~/.emacs.d/lisp")
 (add-to-list 'load-path "~/.emacs.d/slime")
 
+(package-initialize)
 (setq package-archives '(("gnu" . "http://elpa.gnu.org/packages/")
 						 ("melpa" . "http://melpa.milkbox.net/packages/")))
-(package-initialize)
 
 (require 'my-functions)
 (require 'helm-config)
@@ -23,7 +23,7 @@
 ;;; looks
 (moe-dark)
 (custom-set-faces
- '(default ((t (:family "Source Code Pro" :height 90)))))
+ '(default ((t (:family "Dina" :height 100)))))
 
 ;;; core settings
 (setq-default indicate-empty-lines t
@@ -35,7 +35,7 @@
 	  ring-bell-function #'(lambda () (message "*ding*"))
 	  backup-directory-alist `(("." . ,(concat user-emacs-directory "backups")))
 	  auto-save-file-name-transforms `((".*" ,temporary-file-directory t))
-	  jit-lock-defer-time 0.02
+	  ; jit-lock-defer-time 0.02
 	  redisplay-dont-pause t
 	  default-directory "~"
 	  save-place-file (concat user-emacs-directory "places"))
@@ -83,15 +83,24 @@
 		  org-agenda-files (list (concat home "/org/todo.org")
 								 (concat home "/org/finance.org"))
 		  cider-lein-command (concat home "/bin/lein.bat")
-		  lua-default-location (concat home "/bin/lua/bin/lua.exe")
+		  lua-default-application (concat home "/bin/lua/bin/lua.exe")
 		  python-shell-interpreter "C:/Python34/python.exe"
 		  magit-git-executable "C:/Program Files (x86)/Git/bin/git.exe"
 		  ispell-program-name "C:/Program Files (x86)/Aspell/bin/aspell.exe"
+		  inferior-lisp-program "sbcl"
+		  package-check-signature nil ; no gpg installed
 		  tramp-default-method "plink")
 	(setenv "GIT_ASKPASS" "git-gui--askpass")
 	(add-to-list 'exec-path "C:/Program Files (x86)/PuTTy")
 	(add-to-list 'exec-path "C:/Program Files (x86)/Git/bin")
 	(add-to-list 'exec-path "C:/Python34/Scripts")
+	(add-to-list 'exec-path "C:/Python34")
+	(add-to-list 'exec-path "C:/Program Files (x86)/Steel Bank Common Lisp/1.2.1")
+	(add-to-list 'exec-path "C:/msys/1.0/bin")
+	(add-to-list 'exec-path "C:/MinGW/bin")
+	(add-to-list 'exec-path "C:/Rust/bin")
+	(add-to-list 'exec-path (concat home "/bin/ccl"))
+	(add-to-list 'exec-path (concat home "/bin/ctags58"))
 	(add-to-list 'exec-path (concat home "/bin"))))
 
 ;;; keybindings
@@ -138,14 +147,14 @@
 			popwin-mode
 			window-numbering-mode
 			electric-indent-mode
-			global-company-mode
+			global-auto-complete-mode
 			global-smart-tab-mode
 			electric-pair-mode
 			winner-mode
 			projectile-global-mode))
 	  (off '(which-function-mode))
-	  (hide '(company-mode
-			  smart-tab-mode)))
+	  (hide '(smart-tab-mode
+			  auto-complete-mode)))
   (dolist (x on) (funcall x 1))
   (dolist (x off) (funcall x -1))
   (dolist (x hide) (diminish x)))
@@ -155,15 +164,36 @@
 (add-hook 'emacs-lisp-mode-hook 'rainbow-delimiters-mode)
 (add-hook 'emacs-lisp-mode-hook 'eldoc-mode)
 
+(add-hook 'slime-repl-mode-hook 'set-up-slime-ac)
+(add-hook 'slime-repl-mode-hook 'rainbow-delimiters-mode)
+(add-hook 'slime-repl-mode-hook 'enable-paredit-mode)
+
+(add-hook 'slime-mode-hook 'set-up-slime-ac)
+
 (add-hook 'lisp-mode-hook 'rainbow-delimiters-mode)
 (add-hook 'lisp-mode-hook 'enable-paredit-mode)
 
 (add-hook 'lisp-interaction-mode-hook 'enable-paredit-mode)
 (add-hook 'lisp-interaction-mode-hook 'rainbow-delimiters-mode)
 
+(eval-after-load "auto-complete" '(add-to-list 'ac-modes
+											   'slime-repl-mode
+											   'cider-mode))
+
+(eval-after-load 'paredit
+  '(progn
+     (define-key paredit-mode-map (kbd "M-{") 'paredit-wrap-curly)
+	 (define-key paredit-mode-map (kbd "M-[") 'paredit-wrap-square)))
+
 (add-hook 'cider-mode-hook 'cider-turn-on-eldoc-mode)
 (add-hook 'cider-mode-hook 'enable-paredit-mode)
 (add-hook 'cider-mode-hook 'rainbow-delimiters-mode)
+(add-hook 'cider-mode-hook 'ac-flyspell-workaround)
+(add-hook 'cider-mode-hook 'ac-cider-setup)
+
+(add-hook 'cider-repl-mode-hook 'ac-cider-setup)
+(add-hook 'cider-repl-mode-hook 'enable-paredit-mode)
+(add-hook 'cider-repl-mode-hook 'rainbow-delimiters-mode)
 
 (add-hook 'js-mode-hook 'js2-minor-mode)
 
@@ -173,6 +203,29 @@
 
 (add-hook 'c-mode-hook 'semantic-mode)
 (add-hook 'c-mode-hook 'semantic-idle-summary-mode)
+(add-hook 'c-mode-hook 'helm-gtags-mode)
+
+(add-hook 'c++-mode-hook 'helm-gtags-mode)
+
+(add-hook 'asm-mode-hook 'helm-gtags-mode)
+
+(eval-after-load "helm-gtags"
+  '(progn
+	 (define-key helm-gtags-mode-map (kbd "M-t") 'helm-gtags-find-tag)
+	 (define-key helm-gtags-mode-map (kbd "M-r") 'helm-gtags-find-rtag)
+	 (define-key helm-gtags-mode-map (kbd "M-s") 'helm-gtags-find-symbol)
+	 (define-key helm-gtags-mode-map (kbd "M-g M-p") 'helm-gtags-parse-file)
+	 (define-key helm-gtags-mode-map (kbd "C-c <") 'helm-gtags-previous-history)
+	 (define-key helm-gtags-mode-map (kbd "C-c >") 'helm-gtags-next-history)
+	 (define-key helm-gtags-mode-map (kbd "M-,") 'helm-gtags-pop-stack)))
+
+(add-hook 'rust-mode-hook
+		  (lambda ()
+			(define-key rust-mode-map (kbd "<f5>") 'rust-save-compile-and-run)))
+(add-hook 'rust-mode-hook 'flycheck-mode)
+
+(eval-after-load 'flycheck
+  '(add-hook 'flycheck-mode-hook #'flycheck-rust-setup))
 
 ;;; file association
 (dolist (x '(("\\.ps1$" . powershell-mode)
@@ -200,9 +253,9 @@
   (erc :server "irc.freenode.net" :port 6667 :nick "wizzo"))
 
 ;;; natural scrolling
-(setq mouse-wheel-scroll-amount '(3 ((shift) . t)))
-(setq mouse-wheel-progressive-speed nil)
-(setq mouse-wheel-follow-mouse 't)
+(setq mouse-wheel-scroll-amount '(3 ((shift) . t))
+	  mouse-wheel-progressive-speed nil
+	  mouse-wheel-follow-mouse 't)
 (global-set-key [wheel-down] (lambda () (interactive) (scroll-up-command 1)))
 (global-set-key [wheel-up] (lambda () (interactive) (scroll-down-command 1)))
 (global-set-key [double-wheel-down] (lambda () (interactive) (scroll-up-command 2)))

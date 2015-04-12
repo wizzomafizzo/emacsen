@@ -1,5 +1,24 @@
 ;;;; wizzomafizzo: custom functions
 
+(defun rust-save-compile-and-run ()
+  (interactive)
+  (save-buffer)
+  (if (locate-dominating-file (buffer-file-name) "Cargo.toml")
+      (compile "C:/Rust/bin/cargo.exe run")
+    (compile
+     (format "C:/Rust/bin/rustc.exe %s & %s"
+			 (buffer-file-name)
+			 (file-name-sans-extension (buffer-file-name))))))
+
+(add-hook 'rust-mode-hook
+      (lambda ()
+        (define-key rust-mode-map (kbd "<f5>") 'rust-save-compile-and-run)))
+
+(defun reset-erc-track-mode ()
+  (interactive)
+  (setq erc-modified-channels-alist nil)
+  (erc-modified-channels-update))
+
 (defun scratch-lisp-file ()
   "Insert a template (with DEFPACKAGE and IN-PACKAGE forms) into
   the current buffer."
@@ -8,6 +27,7 @@
   (let* ((file (file-name-nondirectory (buffer-file-name)))
          (package (file-name-sans-extension file)))
     (insert ";;;; " file "\n")
+	(insert "\n;;; (load \"~/quicklisp/setup.lisp\")\n")
     (insert "\n(defpackage :" package "\n  (:use :cl))\n\n")
     (insert "(in-package :" package ")\n\n")))
 
