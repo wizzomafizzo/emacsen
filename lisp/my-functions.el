@@ -1,5 +1,17 @@
 ;;;; wizzomafizzo: custom functions
 
+(defun send-to-node-repl ()
+  (interactive)
+  (append-to-buffer "*nodejs*" (region-beginning) (region-end))
+  (keyboard-quit))
+
+(defun my-paredit-nonlisp ()
+  "Turn on paredit mode for non-lisps."
+  (interactive)
+  (set (make-local-variable 'paredit-space-for-delimiter-predicates)
+       '((lambda (endp delimiter) nil)))
+  (paredit-mode 1))
+
 (defun rust-save-compile-and-run ()
   (interactive)
   (save-buffer)
