@@ -9,7 +9,7 @@ USE THESE FOR A FUNDERFUL EXPERIENCE
 
 ```elisp
 (dolist (x '(2048-game
-             ac
+             auto-complete
 			 ac-cider
 			 ac-js2
              ac-slime
@@ -56,7 +56,6 @@ USE THESE FOR A FUNDERFUL EXPERIENCE
              pkgbuild-mode
              popwin
              powershell
-             powershell-mode
              projectile
              rainbow-delimiters
              rainbow-mode
