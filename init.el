@@ -23,7 +23,7 @@
 ;;; looks
 (moe-dark)
 (custom-set-faces
- '(default ((t (:family "Source Code Pro" :height 98)))))
+ '(default ((t (:family "Source Code Pro" :height 140)))))
 
 ;;; core settings
 (setq-default indicate-empty-lines t
@@ -78,7 +78,8 @@
 		flymake-gui-warnings-enabled nil
 		use-dialog-box nil
 		python-shell-interpreter-args ""
-		python-shell-interpreter "/usr/local/bin/python3"))
+		python-shell-interpreter "/usr/local/bin/python3"
+		ispell-program-name "aspell"))
 
 ;; windows stuff
 (when (eq system-type 'windows-nt)
@@ -209,6 +210,7 @@
 		  (lambda ()
 			(define-key js2-mode-map (kbd "C-c C-l") 'send-to-node-repl)
 			(define-key js2-mode-map (kbd "C-c C-r") 'flycheck-clear)))
+(skewer-setup)
 
 (add-hook 'python-mode-hook 'jedi:setup)
 (add-hook 'python-mode-hook 'anaconda-mode)

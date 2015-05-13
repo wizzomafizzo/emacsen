@@ -60,6 +60,7 @@ USE THESE FOR A FUNDERFUL EXPERIENCE
              rainbow-delimiters
              rainbow-mode
              rust-mode
+			 skewer-mode
              slime
              smartparens
              smex
