@@ -16,9 +16,9 @@
   (interactive)
   (save-buffer)
   (if (locate-dominating-file (buffer-file-name) "Cargo.toml")
-      (compile "C:/Rust/bin/cargo.exe run")
+      (compile "cargo run")
     (compile
-     (format "C:/Rust/bin/rustc.exe %s & %s"
+     (format "rustc %s && %s"
 			 (buffer-file-name)
 			 (file-name-sans-extension (buffer-file-name))))))
 
@@ -42,6 +42,11 @@
 	(insert "\n;;; (load \"~/quicklisp/setup.lisp\")\n")
     (insert "\n(defpackage :" package "\n  (:use :cl))\n\n")
     (insert "(in-package :" package ")\n\n")))
+
+(defun comment-current-line ()
+  (interactive)
+  (comment-or-uncomment-region (line-beginning-position)
+							   (line-end-position)))
 
 ;;; try disable modal dialogs everywhere
 ;;; to workaround crashing on mac

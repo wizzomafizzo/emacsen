@@ -7,23 +7,24 @@
 
 ;;; config and load package stuff
 (add-to-list 'load-path "~/.emacs.d/lisp")
-(add-to-list 'load-path "~/.emacs.d/slime")
 
+(setq package-archives '(("gnu" . "https://elpa.gnu.org/packages/")
+						 ("melpa" . "https://melpa.milkbox.net/packages/")))
 (package-initialize)
-(setq package-archives '(("gnu" . "http://elpa.gnu.org/packages/")
-						 ("melpa" . "http://melpa.milkbox.net/packages/")))
 
 (require 'my-functions)
 (require 'helm-config)
 (require 'slime-autoloads)
-(require 'moe-theme)
 (require 'popwin)
 (require 'smart-tab)
+(require '6502-mode)
 
 ;;; looks
-(moe-dark)
+
 (custom-set-faces
- '(default ((t (:family "Source Code Pro" :height 140)))))
+ '(default ((t (:family "Source Code Pro" :height 120)))))
+(load-theme 'material t)
+(powerline-default-theme)
 
 ;;; core settings
 (setq-default indicate-empty-lines t
@@ -35,13 +36,17 @@
 	  ring-bell-function #'(lambda () (message "*ding*"))
 	  backup-directory-alist `(("." . ,(concat user-emacs-directory "backups")))
 	  auto-save-file-name-transforms `((".*" ,temporary-file-directory t))
+	  tramp-auto-save-directory (concat user-emacs-directory "tramp-autosave")
 	  ; jit-lock-defer-time 0.02
 	  redisplay-dont-pause t
 	  default-directory "~"
-	  save-place-file (concat user-emacs-directory "places"))
+	  save-place-file (concat user-emacs-directory "places")
+	  delete-by-moving-to-trash t
+	  initial-scratch-message ";; ಠ_ಠ\n\n")
 (put 'downcase-region 'disabled nil)
 (fset 'yes-or-no-p 'y-or-n-p)
 (add-hook 'before-save-hook #'(lambda () (delete-trailing-whitespace)))
+(add-hook 'after-save-hook 'executable-make-buffer-file-executable-if-script-p)
 
 ;;; mode settings
 (setq comint-scroll-to-bottom-on-input 1
@@ -49,7 +54,7 @@
 	  jedi:setup-keys t
 	  jedi:complete-on-dot t
 	  org-startup-indented t
-	  org-log-done t
+	  ; org-log-done t
 	  tramp-default-method "ssh"
 	  recentf-max-menu-items 250
 	  ido-enable-flex-matching t
@@ -58,22 +63,24 @@
 	  slime-contribs '(slime-fancy)
 	  nrepl-hide-special-buffers t
 	  js2-highlight-level 3
+	  powerline-default-separator 'contour
 	  whitespace-line-column 80
 	  ispell-local-dictionary "british"
-	  projectile-mode-line '(:eval (format " P[%s]" (projectile-project-name)))
-	  elfeed-feeds '("http://www.giantbomb.com/feeds/video"
-					 "http://www.yourmoviesucks.org/feeds/posts/default?alt=rss"
-					 "http://xkcd.com/rss.xml")
+	  projectile-mode-line "P"
+	  elfeed-feeds '("https://news.ycombinator.com/rss")
 	  c-default-style "linux"
 	  c-basic-offset 8
 	  magit-last-seen-setup-instructions "1.4.0"
 	  js2-highlight-level 3
-	  js2-basic-offset 4)
+	  js2-basic-offset 4
+	  web-mode-markup-indent-offset 2
+	  asm-comment-char 35)
 
 ;; mac stuff
 (when (eq system-type 'darwin)
   (menu-bar-mode 1)
   (exec-path-from-shell-initialize)
+  (osx-trash-setup)
   (setq ns-command-modifier 'meta
 		flymake-gui-warnings-enabled nil
 		use-dialog-box nil
@@ -127,20 +134,27 @@
 			 ("<C-S-right>" . buf-move-right)
 			 ("C-c SPC" . ace-jump-mode)
 			 ("C-S-c C-S-c" . mc/edit-lines)
-			 ("C-c i" . imenu)
 			 ("C-l" . whack-whitespace)
 			 ("M-x" . smex)
 			 ("M-X" . smex-major-mode-commands)
 			 ("C-c M-x" . execute-extended-command)
 			 ("C-S-<mouse-1>" . mc/add-cursor-on-click)
 			 ("C-c u" . revert-buffer)
-			 ("C-x w" . elfeed)
 			 ("C-c a" . org-agenda)
 			 ("C-c l" . org-store-link)
 			 ("M-y" . browse-kill-ring)
 			 ("C-c r" . reset-erc-track-mode)
-			 ("C-c w" . whitespace-mode)))
+			 ("C-c w" . whitespace-mode)
+			 ("C-x F" . find-file-literally)
+			 ("C-;" . comment-current-line)))
   (global-set-key (kbd (car x)) (cdr x)))
+
+;; go away seconday selection
+(global-unset-key (kbd "<M-drag-mouse-1>"))
+(global-unset-key (kbd "<M-down-mouse-1>"))
+(global-unset-key (kbd "<M-mouse-1>"))
+(global-unset-key (kbd "<M-mouse-2>"))
+(global-unset-key (kbd "<M-mouse-3>"))
 
 ;;; global modes
 (let ((on '(show-paren-mode
@@ -158,7 +172,8 @@
 			yas-global-mode
 			electric-pair-mode
 			winner-mode
-			projectile-global-mode))
+			projectile-global-mode
+			beacon-mode))
 	  (off '(which-function-mode))
 	  (hide '(smart-tab-mode
 			  auto-complete-mode)))
@@ -233,17 +248,25 @@
 
 (add-hook 'rust-mode-hook
 		  (lambda ()
-			(define-key rust-mode-map (kbd "<f5>") 'rust-save-compile-and-run)))
+			(define-key rust-mode-map (kbd "C-c C-k") 'rust-save-compile-and-run)))
 (add-hook 'rust-mode-hook 'flycheck-mode)
 
 (eval-after-load 'flycheck
   '(add-hook 'flycheck-mode-hook #'flycheck-rust-setup))
 
+(add-hook 'haskell-mode-hook
+		  (lambda ()
+			(define-key haskell-mode-map (kbd "C-c C-c") 'haskell-process-load-file)
+			(define-key haskell-mode-map (kbd "C-c C-n") 'haskell-navigate-imports)
+			(define-key haskell-mode-map (kbd "C-c C-o") 'haskell-compile)))
+(add-hook 'haskell-mode-hook #'hindent-mode)
+
 ;;; file association
 (dolist (x '(("\\.ps1$" . powershell-mode)
 			 ("\\.asp$" . asp-mode)
 			 ("\\.js$" . js2-mode)
-			 ("\\.html$" . web-mode)))
+			 ("\\.html$" . web-mode)
+			 ("\\.s65" . 6502-mode)))
   (add-to-list 'auto-mode-alist x))
 
 ;;; erc

@@ -1,75 +1,88 @@
 emacsen
 =======
 
-EMACS EMACS #DOOT
+Sweet mama mia pasta primavera!
 
 ## Packages ##
 
-USE THESE FOR A FUNDERFUL EXPERIENCE
+This is where the magic happens.
 
 ```elisp
-(dolist (x '(2048-game
-             auto-complete
-			 ac-cider
-			 ac-js2
+(dolist (x '(ac-cider
+             ac-js2
              ac-slime
              anaconda-mode
-             browse-kill-ring
-             buffer-move
-             cider
-             clojure-mode
+			 auto-complete
+			 beacon
+			 browse-kill-ring
+			 buffer-move
+			 cider
+			 clojure-mode
 			 clojure-snippets
-             csv-mode
-             diminish
-             elfeed
-             elpy
-             erc-hl-nicks
-             exec-path-from-shell
-             find-file-in-project
-             flycheck
-             flycheck-rust
+			 company
+			 csv-mode
+			 diminish
+			 elfeed
+			 elpy
+			 epc
+			 erc-hl-nicks
+			 exec-path-from-shell
+			 find-file-in-project
+			 flycheck
+			 flycheck-rust
 			 function-args
-             geiser
-             ggtags
-             git-commit-mode
-             git-gutter
-             gitignore-mode
-             hackernews
-             haskell-mode
+			 geiser
+			 ggtags
+			 git-commit
+			 git-gutter
+			 gitignore-mode
+			 haskell-mode
 			 haskell-snippets
-             helm
-             helm-gtags
-             helm-projectile
-             htmlize
-             jedi
+			 helm
+			 helm-core
+			 helm-gtags
+			 helm-projectile
+			 highlight-indentation
+			 hindent
+			 htmlize
+			 jedi
 			 js2-closure
-             js2-mode
+			 js2-mode
 			 js2-refactor
-             json-mode
-             lua-mode
-             magit
-             markdown-mode
-             moe-theme
-             multiple-cursors
+			 json-mode
+			 json-reformat
+			 lua-mode
+			 magit
+			 magit-popup
+			 markdown-mode
+			 material-theme
+			 multiple-cursors
 			 nodejs-repl
-             paredit
-             pkgbuild-mode
-             popwin
-             powershell
-             projectile
-             rainbow-delimiters
-             rainbow-mode
-             rust-mode
+			 osx-trash
+			 paredit
+			 pkgbuild-mode
+			 popup
+			 popwin
+			 powerline
+			 powershell
+			 projectile
+			 pyenv-mode
+			 pyvenv
+			 rainbow-delimiters
+			 rainbow-mode
+			 rust-mode
 			 skewer-mode
-             slime
-             smartparens
-             smex
-             vlf
+			 slime
+			 smartparens
+			 smex
+			 spinner
+			 swiper
+			 vlf
 			 web-beautify
-             web-mode
-             window-numbering
-             yaml-mode
-             yascroll
-             yasnippet))
+			 web-mode
+			 window-numbering
+			 yaml-mode
+			 yascroll
+			 yasnippet))
   (package-install x))
 ```
