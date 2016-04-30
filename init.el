@@ -286,14 +286,3 @@
 (defun my-erc ()
   (interactive)
   (erc :server "irc.freenode.net" :port 6667 :nick "wizzo"))
-
-;;; natural scrolling
-(setq mouse-wheel-scroll-amount '(3 ((shift) . t))
-	  mouse-wheel-progressive-speed nil
-	  mouse-wheel-follow-mouse 't)
-(global-set-key [wheel-down] (lambda () (interactive) (scroll-up-command 1)))
-(global-set-key [wheel-up] (lambda () (interactive) (scroll-down-command 1)))
-(global-set-key [double-wheel-down] (lambda () (interactive) (scroll-up-command 2)))
-(global-set-key [double-wheel-up] (lambda () (interactive) (scroll-down-command 2)))
-(global-set-key [triple-wheel-down] (lambda () (interactive) (scroll-up-command 3)))
-(global-set-key [triple-wheel-up] (lambda () (interactive) (scroll-down-command 3)))
