@@ -1,7 +1,7 @@
 (defun comment-current-line ()
   (interactive)
   (comment-or-uncomment-region (line-beginning-position)
-							   (line-end-position)))
+			       (line-end-position)))
 
 (defun whack-whitespace ()
   (interactive nil)
